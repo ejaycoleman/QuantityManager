@@ -70,10 +70,36 @@ const columns = [{
 
 
 class ComponentList extends React.Component {
+  constructor(props: any)
+    {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.displayTable = this.displayTable.bind(this);
+
+        this.state = {fileSelected: false};
+    }
+
+    handleChange(selectorFiles: FileList)
+    {
+        console.log(selectorFiles);
+        this.setState({fileSelected: true});
+    }
+
+    displayTable() {
+      if (this.state.fileSelected) {
+        return <Table dataSource={dataSource} columns={columns} pagination={{ pageSize: 5 }}/>;
+      } else {
+        return <h1>Please select a file</h1>;
+      }
+    }
+
   render() {
     return (
       <div>
-        <Table dataSource={dataSource} columns={columns} pagination={{ pageSize: 5 }}/>
+
+        <input type="file" onChange={ (e) => this.handleChange(e.target.files) } />
+        { this.displayTable() }
+
       </div>
     );
   }
