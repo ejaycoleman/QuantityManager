@@ -4,6 +4,9 @@ import { Table } from 'antd';
 
 //import 'antd/dist/antd.css';
 
+const loadJsonFile = require('load-json-file');
+
+
 import css from 'antd/dist/antd.css';
 
 const dataSource = [{
@@ -76,18 +79,26 @@ class ComponentList extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.displayTable = this.displayTable.bind(this);
 
-        this.state = {fileSelected: false};
+        this.state = {fileSelected: false, fileData: ""};
     }
 
     handleChange(selectorFiles: FileList)
     {
-        console.log(selectorFiles);
+        console.log(selectorFiles[0].path);
         this.setState({fileSelected: true});
+
+        loadJsonFile(selectorFiles[0].path).then(json => {
+            console.log(json);
+            //tableData = json;
+
+            this.setState({fileData: json});
+        });
+
     }
 
     displayTable() {
       if (this.state.fileSelected) {
-        return <Table dataSource={dataSource} columns={columns} pagination={{ pageSize: 5 }}/>;
+        return <Table dataSource={this.state.fileData} columns={columns} pagination={{ pageSize: 5 }}/>;
       } else {
         return <h1>Please select a file</h1>;
       }
@@ -99,6 +110,7 @@ class ComponentList extends React.Component {
 
         <input type="file" onChange={ (e) => this.handleChange(e.target.files) } />
         { this.displayTable() }
+
 
       </div>
     );
