@@ -1,61 +1,16 @@
 import '../../assets/css/App.css';
 import React, { Component } from 'react';
-import { Table } from 'antd';
+import { Table, Form, Icon, Input, Button } from 'antd';
+
+const FormItem = Form.Item;
 
 //import 'antd/dist/antd.css';
+
 
 const loadJsonFile = require('load-json-file');
 
 
 import css from 'antd/dist/antd.css';
-
-const dataSource = [{
-  key: '1',
-  name: '20mm Bolt',
-  quantity: 12,
-  partNumber: '199346'
-}, {
-  key: '2',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '3',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '4',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '5',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '6',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '7',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '8',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}, {
-  key: '9',
-  name: '35mm Bolt',
-  quantity: 24,
-  partNumber: '366289'
-}
-];
 
 const columns = [{
   title: 'Name',
@@ -79,7 +34,19 @@ class ComponentList extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.displayTable = this.displayTable.bind(this);
 
-        this.state = {fileSelected: false, fileData: ""};
+        this.logSomething = this.logSomething.bind(this);
+
+        this.state = {
+          fileSelected: false,
+          fileData: [],
+          title: '',
+          quantity: 0,
+          partNumber: 0
+        };
+
+
+        this.handleChange = this.handleChange.bind(this);
+
     }
 
     handleChange(selectorFiles: FileList)
@@ -88,17 +55,30 @@ class ComponentList extends React.Component {
         this.setState({fileSelected: true});
 
         loadJsonFile(selectorFiles[0].path).then(json => {
-            console.log(json);
-            //tableData = json;
-
             this.setState({fileData: json});
         });
 
     }
 
+
+    handleChange(event) {
+      this.setState({[event.target.id]: event.target.value});
+    }
+
+    logSomething(event) {
+      console.log(this.state.title, this.state.quantity, this.state.partNumber);
+      event.preventDefault();
+    }
+
+
     displayTable() {
       if (this.state.fileSelected) {
-        return <Table dataSource={this.state.fileData} columns={columns} pagination={{ pageSize: 5 }}/>;
+        return (
+          <div>
+            <Table dataSource={this.state.fileData} columns={columns} pagination={{ pageSize: 5 }}/>
+
+          </div>
+        );
       } else {
         return <h1>Please select a file</h1>;
       }
@@ -110,7 +90,22 @@ class ComponentList extends React.Component {
 
         <input type="file" onChange={ (e) => this.handleChange(e.target.files) } />
         { this.displayTable() }
-
+        <br />
+        <form onSubmit={this.logSomething}>
+          <label>
+            title:
+            <input type="text" value={this.state.title} onChange={this.handleChange} id="title" />
+          </label>
+          <label>
+            quantity:
+            <input type="number" value={this.state.quantity} onChange={this.handleChange} id="quantity" />
+          </label>
+          <label>
+            part number:
+            <input type="number" value={this.state.partNumber} onChange={this.handleChange} id="partNumber" />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
 
       </div>
     );

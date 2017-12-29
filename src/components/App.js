@@ -2,7 +2,7 @@ import '../assets/css/App.css';
 import React, { Component } from 'react';
 
 import ComponentList from './displayComponents/table.js'
-import WrappedHorizontalLoginForm from './addComponent/form';
+/*import WrappedHorizontalLoginForm from './addComponent/form';*/
 
 class App extends React.Component {
   render() {
@@ -11,7 +11,7 @@ class App extends React.Component {
         <h1>Welcome to the component manager</h1>
         <br/>
         <ComponentList />
-        <WrappedHorizontalLoginForm />
+        {/*}<WrappedHorizontalLoginForm />{*/}
       </div>
     );
   }
