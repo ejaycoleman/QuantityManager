@@ -6,8 +6,10 @@ const FormItem = Form.Item;
 
 //import 'antd/dist/antd.css';
 
+var filePathName;
 
 const loadJsonFile = require('load-json-file');
+var jsonfile = require('jsonfile')
 
 
 import css from 'antd/dist/antd.css';
@@ -34,7 +36,7 @@ class ComponentList extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.displayTable = this.displayTable.bind(this);
 
-        this.logSomething = this.logSomething.bind(this);
+        this.submitNewComponent = this.submitNewComponent.bind(this);
 
         this.state = {
           fileSelected: false,
@@ -49,9 +51,9 @@ class ComponentList extends React.Component {
 
     }
 
-    handleChange(selectorFiles: FileList)
+    handleFileChange(selectorFiles: FileList)
     {
-        console.log(selectorFiles[0].path);
+        filePathName = selectorFiles[0].path;
         this.setState({fileSelected: true});
 
         loadJsonFile(selectorFiles[0].path).then(json => {
@@ -60,14 +62,23 @@ class ComponentList extends React.Component {
 
     }
 
-
     handleChange(event) {
       this.setState({[event.target.id]: event.target.value});
     }
 
-    logSomething(event) {
+    submitNewComponent(event) {
       console.log(this.state.title, this.state.quantity, this.state.partNumber);
       event.preventDefault();
+
+
+
+      var fileContents = this.state.fileData;
+      fileContents.push({name: this.state.title, quantity: this.state.quantity, partNumber: this.state.partNumber});
+      this.setState({"fileData": fileContents});
+
+      jsonfile.writeFile(filePathName, fileContents, {spaces: 2}, function(err) {
+        console.error(err)
+      })
     }
 
 
@@ -88,10 +99,10 @@ class ComponentList extends React.Component {
     return (
       <div>
 
-        <input type="file" onChange={ (e) => this.handleChange(e.target.files) } />
+        <input type="file" onChange={ (e) => this.handleFileChange(e.target.files) } />
         { this.displayTable() }
         <br />
-        <form onSubmit={this.logSomething}>
+        <form onSubmit={this.submitNewComponent}>
           <label>
             title:
             <input type="text" value={this.state.title} onChange={this.handleChange} id="title" />
