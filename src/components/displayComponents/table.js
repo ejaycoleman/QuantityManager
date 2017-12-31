@@ -23,9 +23,9 @@ const columns = [{
   dataIndex: 'quantity',
   key: 'quantity',
 }, {
-  title: 'PartNumber',
-  dataIndex: 'partNumber',
-  key: 'partNumber',
+  title: 'Drawing Name',
+  dataIndex: 'drawingName',
+  key: 'drawingName',
 }];
 
 
@@ -41,9 +41,9 @@ class ComponentList extends React.Component {
         this.state = {
           fileSelected: false,
           fileData: [],
-          title: '',
+          title: 'M10 Full Nut',
           quantity: 0,
-          partNumber: 0
+          drawingName: ''
         };
 
 
@@ -63,19 +63,48 @@ class ComponentList extends React.Component {
     }
 
     handleChange(event) {
+
       this.setState({[event.target.id]: event.target.value});
     }
 
+    findWithAttr(array, attr, value) {
+        for(var i = 0; i < array.length; i += 1) {
+            if(array[i][attr] === value) {
+
+                return i;
+            }
+        }
+        console.log(value);
+        console.log(array[i][attr]);
+        return -1;
+    }
+
     submitNewComponent(event) {
-      console.log(this.state.title, this.state.quantity, this.state.partNumber);
+      console.log("exectued");
+      console.log("values: ", this.state.title, this.state.quantity);
       event.preventDefault();
 
-
-
+      // if name exists
+      // if drawing exists
       var fileContents = this.state.fileData;
-      fileContents.push({name: this.state.title, quantity: this.state.quantity, partNumber: this.state.partNumber});
-      this.setState({"fileData": fileContents});
 
+      var indexOfComponent = this.findWithAttr(fileContents, "name", this.state.title);
+      console.log(fileContents);
+
+      if (this.indexOfComponent == -1) {
+        fileContents.push({key: fileContents.length+1, name: this.state.title, drawingName: this.state.drawingName, quantity: this.state.quantity});
+
+      } else {
+        console.log(fileContents[indexOfComponent]);
+        console.log("index: "+indexOfComponent);
+        // this needs to convert to an integer
+        fileContents[indexOfComponent].quantity += this.state.quantity;
+        // this needs to search if its contained, not equal
+        if (fileContents[indexOfComponent].drawingName != this.state.drawingName) {
+          fileContents[indexOfComponent].drawingName += ", "+ this.state.drawingName;
+        }
+      }
+      this.setState({"fileData": fileContents});
       jsonfile.writeFile(filePathName, fileContents, {spaces: 2}, function(err) {
         console.error(err)
       })
@@ -98,22 +127,27 @@ class ComponentList extends React.Component {
   render() {
     return (
       <div>
-
+        <label>
+          Drawing Name:
+          <input type="text" value={this.state.drawingName} onChange={this.handleChange} id="drawingName" />
+        </label>
+        <br />
         <input type="file" onChange={ (e) => this.handleFileChange(e.target.files) } />
         { this.displayTable() }
         <br />
         <form onSubmit={this.submitNewComponent}>
           <label>
-            title:
-            <input type="text" value={this.state.title} onChange={this.handleChange} id="title" />
+            Description:
+            <select value={this.state.title} onChange={this.handleChange} id="title">
+              <option value="M10 Full Nut">M10 Full Nut</option>
+              <option value="M10 Half Nut">M10 Half Nut</option>
+              <option valye="M10 Nyloc Nut">M10 Nyloc Nut</option>
+              <option value="M10 Plain Washer">M10 Plain Washer</option>
+            </select>
           </label>
           <label>
-            quantity:
+            Quantity:
             <input type="number" value={this.state.quantity} onChange={this.handleChange} id="quantity" />
-          </label>
-          <label>
-            part number:
-            <input type="number" value={this.state.partNumber} onChange={this.handleChange} id="partNumber" />
           </label>
           <input type="submit" value="Submit" />
         </form>
