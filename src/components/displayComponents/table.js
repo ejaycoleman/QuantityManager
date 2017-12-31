@@ -79,6 +79,16 @@ class ComponentList extends React.Component {
         return -1;
     }
 
+    findInDrawingList(file, indexOfComponent) {
+      var drawingArray = file[indexOfComponent].drawingName.split(", ");
+      for (var i = 0; i < drawingArray.length; i++) {
+        if (drawingArray[i] == this.state.drawingName) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     submitNewComponent(event) {
       console.log("exectued");
       console.log("values: ", this.state.title, this.state.quantity);
@@ -97,13 +107,16 @@ class ComponentList extends React.Component {
       } else {
         console.log(fileContents[indexOfComponent]);
         console.log("index: "+indexOfComponent);
-        // this needs to convert to an integer
-        fileContents[indexOfComponent].quantity += this.state.quantity;
-        // this needs to search if its contained, not equal
-        if (fileContents[indexOfComponent].drawingName != this.state.drawingName) {
+
+        fileContents[indexOfComponent].quantity = parseInt(fileContents[indexOfComponent].quantity);
+        fileContents[indexOfComponent].quantity += parseInt(this.state.quantity);
+
+
+        if (this.findInDrawingList(fileContents, indexOfComponent)) {
           fileContents[indexOfComponent].drawingName += ", "+ this.state.drawingName;
         }
       }
+
       this.setState({"fileData": fileContents});
       jsonfile.writeFile(filePathName, fileContents, {spaces: 2}, function(err) {
         console.error(err)
