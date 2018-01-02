@@ -35,6 +35,7 @@ class ComponentList extends React.Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.displayTable = this.displayTable.bind(this);
+        this.displayForm = this.displayForm.bind(this);
 
         this.submitNewComponent = this.submitNewComponent.bind(this);
 
@@ -137,33 +138,42 @@ class ComponentList extends React.Component {
       }
     }
 
+    displayForm() {
+      if (this.state.fileSelected) {
+        return (
+          <form onSubmit={this.submitNewComponent}>
+            <label>
+              Drawing Name:
+              <input type="text" value={this.state.drawingName} onChange={this.handleChange} id="drawingName" />
+            </label>
+            <label>
+              Description:
+              <select value={this.state.title} onChange={this.handleChange} id="title">
+                <option value="M10 Full Nut">M10 Full Nut</option>
+                <option value="M10 Half Nut">M10 Half Nut</option>
+                <option valye="M10 Nyloc Nut">M10 Nyloc Nut</option>
+                <option value="M10 Plain Washer">M10 Plain Washer</option>
+              </select>
+            </label>
+            <label>
+              Quantity:
+              <input type="number" value={this.state.quantity} onChange={this.handleChange} id="quantity" />
+            </label>
+            <input type="submit" value="Submit" />
+          </form>
+        );
+      } 
+    }
+
   render() {
     return (
       <div>
-        <label>
-          Drawing Name:
-          <input type="text" value={this.state.drawingName} onChange={this.handleChange} id="drawingName" />
-        </label>
+
         <br />
         <input type="file" onChange={ (e) => this.handleFileChange(e.target.files) } />
         { this.displayTable() }
         <br />
-        <form onSubmit={this.submitNewComponent}>
-          <label>
-            Description:
-            <select value={this.state.title} onChange={this.handleChange} id="title">
-              <option value="M10 Full Nut">M10 Full Nut</option>
-              <option value="M10 Half Nut">M10 Half Nut</option>
-              <option valye="M10 Nyloc Nut">M10 Nyloc Nut</option>
-              <option value="M10 Plain Washer">M10 Plain Washer</option>
-            </select>
-          </label>
-          <label>
-            Quantity:
-            <input type="number" value={this.state.quantity} onChange={this.handleChange} id="quantity" />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+        { this.displayForm() }
 
       </div>
     );
