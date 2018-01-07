@@ -9,7 +9,10 @@ const FormItem = Form.Item;
 var filePathName;
 
 const loadJsonFile = require('load-json-file');
-var jsonfile = require('jsonfile')
+var jsonfile = require('jsonfile');
+
+import styled from 'styled-components';
+
 
 
 import css from 'antd/dist/antd.css';
@@ -27,6 +30,12 @@ const columns = [{
   dataIndex: 'drawingName',
   key: 'drawingName',
 }];
+
+
+const FileDrop = styled.input `
+  width: 200;
+  margin: auto;
+`;
 
 
 class ComponentList extends React.Component {
@@ -162,7 +171,7 @@ class ComponentList extends React.Component {
             <input type="submit" value="Submit" />
           </form>
         );
-      } 
+      }
     }
 
   render() {
@@ -170,7 +179,7 @@ class ComponentList extends React.Component {
       <div>
 
         <br />
-        <input type="file" onChange={ (e) => this.handleFileChange(e.target.files) } />
+        <FileDrop type="file" onChange={ (e) => this.handleFileChange(e.target.files) } />
         { this.displayTable() }
         <br />
         { this.displayForm() }
